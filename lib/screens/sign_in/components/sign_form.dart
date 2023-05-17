@@ -66,7 +66,7 @@ class _SignFormState extends State<SignForm> {
                     onTap: () => Navigator.pushNamed(
                         context, ForgotPasswordScreen.routeName),
                     child: Text(
-                      "Forgot Password",
+                      "Şifremi unuttum",
                       style: TextStyle(decoration: TextDecoration.underline),
                     ),
                   )
@@ -83,7 +83,7 @@ class _SignFormState extends State<SignForm> {
                       });
                     },
                   ),
-                    Text("Remember me"),],
+                    Text("Beni Hatırla"),],
                 )
               ],
 
@@ -93,7 +93,7 @@ class _SignFormState extends State<SignForm> {
           FormError(errors: errors),
           SizedBox(height: getProportionateScreenHeight(10)),
           DefaultButton(
-            text: "Continue",
+            text: "Devam Et",
             press: () async {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
@@ -131,8 +131,8 @@ class _SignFormState extends State<SignForm> {
       }
       ,
       decoration: InputDecoration(
-        labelText: "Password",
-        hintText: "Enter password",
+        labelText: "Şifre",
+        hintText: "Şirenizi girinz",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -164,8 +164,8 @@ class _SignFormState extends State<SignForm> {
         return null;
       },
       decoration: InputDecoration(
-        labelText: "Email",
-        hintText: "Enter your email",
+        labelText: "E-posta",
+        hintText: "E-postanızı giriniz",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,

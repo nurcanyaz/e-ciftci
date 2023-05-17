@@ -21,32 +21,57 @@ class ProductDescription extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding:
-              EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
-          child: Text(
-            product.title,
-            style: Theme.of(context).textTheme.headline6,
-          ),
-        ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: Container(
-            padding: EdgeInsets.all(getProportionateScreenWidth(15)),
-            width: getProportionateScreenWidth(64),
-            decoration: BoxDecoration(
-              color:
-                  product.isFavourite ? Color(0xFFFFE6E6) : Color(0xFFF5F6F9),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                bottomLeft: Radius.circular(20),
+          padding: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    "Satıcı: ${product.seller}",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(width: 5),
+                  Icon(
+                    Icons.check_circle,
+                    color: Colors.green,
+                    size: 16,
+                  ),
+                ],
               ),
-            ),
-            child: SvgPicture.asset(
-              "assets/icons/Heart Icon_2.svg",
-              color:
-                  product.isFavourite ? Color(0xFFFF4848) : Color(0xFFDBDEE4),
-              height: getProportionateScreenWidth(16),
-            ),
+              Row(
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      // Takip et butonuna tıklanınca yapılacak işlemler
+                    },
+                    icon: Icon(Icons.add),
+                    label: Text("Takip Et"),
+                  ),
+                  SizedBox(width: 10),
+                  Container(
+                    width: getProportionateScreenWidth(64),
+                    decoration: BoxDecoration(
+                      color: product.isFavourite ? Color(0xFFFFE6E6) : Color(0xFFF5F6F9),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        bottomLeft: Radius.circular(20),
+                      ),
+                    ),
+                    child: IconButton(
+                      onPressed: () {
+                        // Kalp ikonuna tıklanınca yapılacak işlemler
+                      },
+                      icon: SvgPicture.asset(
+                        "assets/icons/Heart Icon_2.svg",
+                        color: product.isFavourite ? Color(0xFFFF4848) : Color(0xFFDBDEE4),
+                        height: getProportionateScreenWidth(16),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
         Padding(
@@ -65,13 +90,15 @@ class ProductDescription extends StatelessWidget {
             vertical: 10,
           ),
           child: GestureDetector(
-            onTap: () {},
+            onTap: pressOnSeeMore,
             child: Row(
               children: [
                 Text(
-                  "See More Detail",
+                  "Daha fazla detay gör",
                   style: TextStyle(
-                      fontWeight: FontWeight.w600, color: kPrimaryColor),
+                    fontWeight: FontWeight.w600,
+                    color: kPrimaryColor,
+                  ),
                 ),
                 SizedBox(width: 5),
                 Icon(
@@ -82,7 +109,7 @@ class ProductDescription extends StatelessWidget {
               ],
             ),
           ),
-        )
+        ),
       ],
     );
   }

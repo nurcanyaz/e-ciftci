@@ -92,7 +92,6 @@ class MessagePanelDisplay extends StatelessWidget {
     String toUser = profileTo['username'];
     String CurrUserUID = profileFrom['UID'];
     String toUserUID = profileTo['UID'];
-
     String toUserIcon = profileTo['icon'];
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 1, vertical: 2),
@@ -124,12 +123,13 @@ class MessagePanelDisplay extends StatelessWidget {
   }
 
   Column buildIcon(icon) {
+    print(icon);
     return Column(
       children: [
         SvgPicture.asset(
           'assets/icons/$icon',
           color: kPrimaryColor,
-          width: 40,
+          width: 50,
         ),
       ],
     );

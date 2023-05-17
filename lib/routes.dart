@@ -1,4 +1,5 @@
 
+import 'package:e_ciftcim/screens/Favourites/favourites_screen.dart';
 import 'package:e_ciftcim/screens/cart/cart_screen.dart';
 import 'package:e_ciftcim/screens/chat/chat_screen.dart';
 import 'package:e_ciftcim/screens/chat/components/chat_form.dart';
@@ -7,6 +8,7 @@ import 'package:e_ciftcim/screens/details/details_screen.dart';
 import 'package:e_ciftcim/screens/forgot_password/forgot_password_screen.dart';
 import 'package:e_ciftcim/screens/home/home_screen.dart';
 import 'package:e_ciftcim/screens/login_success/login_success_screen.dart';
+import 'package:e_ciftcim/screens/notification/notification_screen.dart';
 import 'package:e_ciftcim/screens/otp/otp_screen.dart';
 import 'package:e_ciftcim/screens/profile/profile_screen.dart';
 import 'package:e_ciftcim/screens/sign_in/sign_in_screen.dart';
@@ -30,6 +32,6 @@ final Map<String, WidgetBuilder> routes = {
   DetailsScreen.routeName: (context) => DetailsScreen(),
   CartScreen.routeName: (context) => CartScreen(),
   ProfileScreen.routeName: (context) => ProfileScreen(),
-
-
+  NotificationScreen.routeName: (context) => NotificationScreen(),
+  FavouritesScreen.routeName: (context) => FavouritesScreen(),
 };

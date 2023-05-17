@@ -26,14 +26,13 @@ const defaultDuration = Duration(milliseconds: 250);
 final RegExp emailValidatorRegExp =
     RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 const String kEmailNullError = "Lütfen E-postanızı giriniz";
-const String kInvalidEmailError = "Please Enter Valid Email";
-const String kPassNullError = "Please Enter your password";
-const String kPassOrEmailInvalid = "E-posta veya Şifre yanlış";
-const String kShortPassError = "Password is too short";
-const String kMatchPassError = "Passwords don't match";
-const String kNamelNullError = "Please Enter your name";
-const String kPhoneNumberNullError = "Please Enter your phone number";
-const String kAddressNullError = "Please Enter your address";
+const String kInvalidEmailError = "Lütfen Valid E-mailinizi giriniz";
+const String kPassNullError = "Lütfen şifrenizi giriniz";
+const String kShortPassError = "Şifre çok kısa";
+const String kMatchPassError = "Şifreler eşleşmiyor";
+const String kNamelNullError = "Lütfen adınızı giriniz";
+const String kPhoneNumberNullError = "Lütfen telefon numaranızı giriniz";
+const String kAddressNullError = "Lütfen adresinizi giriniz";
 const String kMessageNullError= "Boş mesaj gönderilemez!";
 const String kSexNullError= "Cinsiyetinizi giriniz";
 

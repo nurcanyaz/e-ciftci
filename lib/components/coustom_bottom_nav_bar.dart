@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../constants.dart';
 import '../enums.dart';
+import '../screens/Favourites/favourites_screen.dart';
 import '../screens/chat/chat_screen.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
@@ -51,7 +52,14 @@ class CustomBottomNavBar extends StatelessWidget {
               ),
               IconButton(
                 icon: SvgPicture.asset("assets/icons/Heart Icon.svg"),
-                onPressed: () {},
+                  color: MenuState.message == selectedMenu
+                      ? kPrimaryColor
+                      : inActiveIconColor,
+                onPressed: () {
+
+                  Navigator.pushNamed(context, FavouritesScreen.routeName);
+
+                },
               ),
               IconButton(
                 icon: SvgPicture.asset("assets/icons/Chat bubble Icon.svg",

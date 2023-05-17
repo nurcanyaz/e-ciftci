@@ -64,7 +64,7 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
 
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
-                iconFilename = (sex == 'Kadın') ? 'female.png' : 'male.png';
+                iconFilename = (sex == 'Kadın') ? 'female.svg' : 'male.svg';
                 Map<String, dynamic> updatedData = {
                   'fName': firstName,
                   'lName': lastName,

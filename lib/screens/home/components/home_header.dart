@@ -1,4 +1,5 @@
 import 'package:e_ciftcim/screens/cart/cart_screen.dart';
+import 'package:e_ciftcim/screens/notification/notification_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../../size_config.dart';
@@ -26,7 +27,7 @@ class HomeHeader extends StatelessWidget {
           IconBtnWithCounter(
             svgSrc: "assets/icons/Bell.svg",
             numOfitem: 3,
-            press: () {},
+            press: () => Navigator.pushNamed(context, NotificationScreen.routeName),
           ),
         ],
       ),
