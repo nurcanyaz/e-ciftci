@@ -28,12 +28,15 @@ final RegExp emailValidatorRegExp =
 const String kEmailNullError = "Lütfen E-postanızı giriniz";
 const String kInvalidEmailError = "Please Enter Valid Email";
 const String kPassNullError = "Please Enter your password";
+const String kPassOrEmailInvalid = "E-posta veya Şifre yanlış";
 const String kShortPassError = "Password is too short";
 const String kMatchPassError = "Passwords don't match";
 const String kNamelNullError = "Please Enter your name";
 const String kPhoneNumberNullError = "Please Enter your phone number";
 const String kAddressNullError = "Please Enter your address";
 const String kMessageNullError= "Boş mesaj gönderilemez!";
+const String kSexNullError= "Cinsiyetinizi giriniz";
+
 
 final otpInputDecoration = InputDecoration(
   contentPadding:

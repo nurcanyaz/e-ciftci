@@ -1,3 +1,4 @@
+import 'package:e_ciftcim/Controllers/LoginController.dart';
 import 'package:e_ciftcim/components/custom_surfix_icon.dart';
 import 'package:e_ciftcim/components/form_error.dart';
 import 'package:e_ciftcim/helper/keyboard.dart';
@@ -48,7 +49,6 @@ class _SignFormState extends State<SignForm> {
 //...
   @override
   Widget build(BuildContext context) {
-    firebase();
     return Form(
       key: _formKey,
       child: Column(
@@ -56,49 +56,53 @@ class _SignFormState extends State<SignForm> {
           buildEmailFormField(),
           SizedBox(height: getProportionateScreenHeight(30)),
           buildPasswordFormField(),
-          SizedBox(height: getProportionateScreenHeight(30)),
-          Row(
-            children: [
-              Checkbox(
-                value: remember,
-                activeColor: kPrimaryColor,
-                onChanged: (value) {
-                  setState(() {
-                    remember = value;
-                  });
-                },
+          SizedBox(height: getProportionateScreenHeight(10)),
+          Padding(padding: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
+            child: Column(
+              children: [ Row(
+                children: [
+
+                  GestureDetector(
+                    onTap: () => Navigator.pushNamed(
+                        context, ForgotPasswordScreen.routeName),
+                    child: Text(
+                      "Forgot Password",
+                      style: TextStyle(decoration: TextDecoration.underline),
+                    ),
+                  )
+                ],
               ),
-              Text("Remember me"),
-              Spacer(),
-              GestureDetector(
-                onTap: () => Navigator.pushNamed(
-                    context, ForgotPasswordScreen.routeName),
-                child: Text(
-                  "Forgot Password",
-                  style: TextStyle(decoration: TextDecoration.underline),
-                ),
-              )
-            ],
-          ),
+                SizedBox(height: getProportionateScreenHeight(10)),
+                Row(
+                  children: [ Checkbox(
+                    value: remember,
+                    activeColor: kPrimaryColor,
+                    onChanged: (value) {
+                      setState(() {
+                        remember = value;
+                      });
+                    },
+                  ),
+                    Text("Remember me"),],
+                )
+              ],
+
+
+            ),),
+
           FormError(errors: errors),
-          SizedBox(height: getProportionateScreenHeight(20)),
+          SizedBox(height: getProportionateScreenHeight(10)),
           DefaultButton(
             text: "Continue",
-            press: () {
+            press: () async {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
-                final userCredentials = FirebaseAuth.instance
-                    .signInWithEmailAndPassword(
-                        email: email, password: password);
-
-                // if all are valid then go to success screen
-                KeyboardUtil.hideKeyboard(context);
-                Navigator.pushNamed(context, LoginSuccessScreen.routeName);
+               LoginController login = new LoginController();
+               login.signInWithEmailAndPassword(context, email, password);
               }
             },
           ),
-        ],
-      ),
+      ],)
     );
   }
 
@@ -122,11 +126,13 @@ class _SignFormState extends State<SignForm> {
           addError(error: kShortPassError);
           return "";
         }
+
         return null;
-      },
+      }
+      ,
       decoration: InputDecoration(
         labelText: "Password",
-        hintText: "Enter your password",
+        hintText: "Enter password",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,

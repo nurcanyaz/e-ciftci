@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_ciftcim/Controllers/SignUpController.dart';
 import 'package:e_ciftcim/components/custom_surfix_icon.dart';
 import 'package:e_ciftcim/components/default_button.dart';
 import 'package:e_ciftcim/components/form_error.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../../constants.dart';
 import '../../../firebase_options.dart';
@@ -63,17 +66,12 @@ class _SignUpFormState extends State<SignUpForm> {
                   SizedBox(height: getProportionateScreenHeight(40)),
                   DefaultButton(
                     text: "Continue",
-                    press: () {
+                    press: () async {
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
-                        try {
-                          final userCredentials = FirebaseAuth.instance
-                              .createUserWithEmailAndPassword(
-                                  email: email, password: password);
-                          print(userCredentials);
-                        } on FirebaseAuthException catch (e) {
-                          if (e.code == "") addError(error: e.code);
-                        }
+                      SignUpController signup= SignUpController();
+                      signup.signUpWithEmailAndPassword(email, password);
+
 
                         // if all are valid then go to success screen
                         // Navigator.pushNamed(context, CompleteProfileScreen.routeName);// this used to be the complete_profile screen

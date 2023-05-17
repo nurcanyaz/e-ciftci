@@ -1,4 +1,7 @@
+
 import 'package:e_ciftcim/screens/cart/cart_screen.dart';
+import 'package:e_ciftcim/screens/chat/chat_screen.dart';
+import 'package:e_ciftcim/screens/chat/components/chat_form.dart';
 import 'package:e_ciftcim/screens/complete_profile/complete_profile_screen.dart';
 import 'package:e_ciftcim/screens/details/details_screen.dart';
 import 'package:e_ciftcim/screens/forgot_password/forgot_password_screen.dart';
@@ -20,10 +23,13 @@ final Map<String, WidgetBuilder> routes = {
   ForgotPasswordScreen.routeName: (context) => ForgotPasswordScreen(),
   LoginSuccessScreen.routeName: (context) => LoginSuccessScreen(),
   SignUpScreen.routeName: (context) => SignUpScreen(),
+  ChatScreen.routeName: (context) => ChatScreen(),
   CompleteProfileScreen.routeName: (context) => CompleteProfileScreen(),
   OtpScreen.routeName: (context) => OtpScreen(),
   HomeScreen.routeName: (context) => HomeScreen(),
   DetailsScreen.routeName: (context) => DetailsScreen(),
   CartScreen.routeName: (context) => CartScreen(),
   ProfileScreen.routeName: (context) => ProfileScreen(),
+
+
 };

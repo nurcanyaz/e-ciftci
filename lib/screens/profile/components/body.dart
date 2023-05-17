@@ -1,5 +1,8 @@
+import 'package:e_ciftcim/screens/sign_in/sign_in_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../complete_profile/complete_profile_screen.dart';
 import 'profile_menu.dart';
 import 'profile_pic.dart';
 
@@ -14,8 +17,8 @@ class Body extends StatelessWidget {
           SizedBox(height: 20),
           ProfileMenu(
             text: "My Account",
-            icon: "assets/icons/User Icon.svg",
-            press: () => {},
+            icon: "assets/icons/User.dart Icon.svg",
+            press: () => {Navigator.pushNamed(context, CompleteProfileScreen.routeName)},
           ),
           ProfileMenu(
             text: "Notifications",
@@ -35,7 +38,21 @@ class Body extends StatelessWidget {
           ProfileMenu(
             text: "Log Out",
             icon: "assets/icons/Log out.svg",
-            press: () {},
+            press: () async{
+              try {
+                await FirebaseAuth.instance.signOut();
+
+
+              } catch (e) {
+                print("Error signing out: $e");
+              }
+              User? user =  FirebaseAuth.instance.currentUser;
+              if(user==null){
+                Navigator.pushNamed(context, SignInScreen.routeName);
+
+              }
+
+            },
           ),
         ],
       ),

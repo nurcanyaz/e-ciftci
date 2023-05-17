@@ -1,10 +1,14 @@
 import 'package:e_ciftcim/routes.dart';
 import 'package:e_ciftcim/screens/splash/splash_screen.dart';
 import 'package:e_ciftcim/theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   runApp(const MyApp());
 }
 
