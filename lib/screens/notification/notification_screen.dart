@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:e_ciftcim/models/notification.dart';
+import 'package:e_ciftcim/models/Notification.dart';
 
 class NotificationScreen extends StatelessWidget {
   static String routeName = "/notification";
