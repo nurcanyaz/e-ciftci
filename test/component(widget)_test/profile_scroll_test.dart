@@ -1,21 +1,23 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/material.dart';
 import 'package:e_ciftcim/screens/profile/components/body.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+Widget createBody() => MaterialApp(home: Body());
 
 void main() {
-  testWidgets('Body widget scroll test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MaterialApp(home: Body()));
+  group('Profile Menu Scroll Test', () {
+    testWidgets('Scroll test', (tester) async {
+      await tester.pumpWidget(createBody());
 
-    // Obtain the SingleChildScrollView widget
-    var scrollView = find.byType(SingleChildScrollView);
-    expect(scrollView, findsOneWidget);
+      // Ensure that the "Çıkış Yap" menu item is not found
+      expect(find.text('Çıkış Yap'), findsNothing);
 
-    // Attempt to scroll down
-    await tester.drag(scrollView, Offset(0, -500));
-    await tester.pumpAndSettle();
+      // Scroll the widget
+      await tester.fling(find.byType(ListView), Offset(0, -200), 3000);
+      await tester.pumpAndSettle();
 
-    // At this point, you could check for certain conditions after the scroll
-    // For example, you can test whether a certain widget is now visible or not
+      // Ensure that the "Çıkış Yap" menu item is still not found
+      expect(find.text('Çıkış Yap'), findsOneWidget);
+    });
   });
 }

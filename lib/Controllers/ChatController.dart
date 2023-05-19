@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/ChatMessages.dart';
 import 'package:rxdart/rxdart.dart';
 class ChatController {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  static FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Save a message to Firestore
   Future<void> saveMessage(ChatMessage chatMessage) async {

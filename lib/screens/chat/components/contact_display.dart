@@ -1,25 +1,18 @@
 import 'package:e_ciftcim/Controllers/ProfileController.dart';
-import 'package:e_ciftcim/components/custom_surfix_icon.dart';
-import 'package:e_ciftcim/components/form_error.dart';
-import 'package:e_ciftcim/helper/keyboard.dart';
 import 'package:e_ciftcim/screens/chat/components/chat_form.dart';
-import 'package:e_ciftcim/models/Profile.dart' as prefix;
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../../Controllers/UserController.dart';
-import '../../../components/default_button.dart';
 import '../../../constants.dart';
 import '../../../models/Profile.dart';
 import '../../../size_config.dart';
+
 class MessagePanelDisplay extends StatefulWidget {
   @override
   _MessagePanelDisplayState createState() => _MessagePanelDisplayState();
-
-
 }
+
 class _MessagePanelDisplayState extends State<MessagePanelDisplay> {
   final UserController userController = UserController();
   final UserProfileController profileController = UserProfileController();
@@ -43,7 +36,8 @@ class _MessagePanelDisplayState extends State<MessagePanelDisplay> {
                 return FutureBuilder<String?>(
                   future: userController.getCurrentUserId(),
                   builder: (context, userSnapshot) {
-                    if (userSnapshot.connectionState == ConnectionState.waiting) {
+                    if (userSnapshot.connectionState ==
+                        ConnectionState.waiting) {
                       return CircularProgressIndicator();
                     } else if (userSnapshot.hasError) {
                       return Text('Error: ${userSnapshot.error}');
@@ -53,18 +47,22 @@ class _MessagePanelDisplayState extends State<MessagePanelDisplay> {
                         return FutureBuilder<Map<String, dynamic>>(
                           future: profileController.getUserProfile(toUser.uid),
                           builder: (context, toProfileSnapshot) {
-                            if (toProfileSnapshot.connectionState == ConnectionState.waiting) {
+                            if (toProfileSnapshot.connectionState ==
+                                ConnectionState.waiting) {
                               return CircularProgressIndicator();
                             } else if (toProfileSnapshot.hasError) {
                               return Text('Error: ${toProfileSnapshot.error}');
                             } else {
                               return FutureBuilder<Map<String, dynamic>>(
-                                future: profileController.getUserProfile(fromUser),
+                                future:
+                                    profileController.getUserProfile(fromUser),
                                 builder: (context, fromProfileSnapshot) {
-                                  if (fromProfileSnapshot.connectionState == ConnectionState.waiting) {
+                                  if (fromProfileSnapshot.connectionState ==
+                                      ConnectionState.waiting) {
                                     return CircularProgressIndicator();
                                   } else if (fromProfileSnapshot.hasError) {
-                                    return Text('Error: ${fromProfileSnapshot.error}');
+                                    return Text(
+                                        'Error: ${fromProfileSnapshot.error}');
                                   } else {
                                     return buildChatPanel(
                                       fromProfileSnapshot.data!,
@@ -91,7 +89,8 @@ class _MessagePanelDisplayState extends State<MessagePanelDisplay> {
     );
   }
 
-  Padding buildChatPanel(Map<String, dynamic> profileFrom, Map<String, dynamic> profileTo, context) {
+  Padding buildChatPanel(Map<String, dynamic> profileFrom,
+      Map<String, dynamic> profileTo, context) {
     String toUser = profileTo['username'];
     String CurrUserUID = profileFrom['UID'];
     String toUserUID = profileTo['UID'];
@@ -102,14 +101,18 @@ class _MessagePanelDisplayState extends State<MessagePanelDisplay> {
         style: TextButton.styleFrom(
           primary: kPrimaryColor,
           padding: EdgeInsets.all(20),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           backgroundColor: Color(0xFFF5F6F9),
         ),
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ChatForm(frmUser: CurrUserUID, toUser: toUserUID,toUserUsername: toUser),
+              builder: (context) => ChatForm(
+                  frmUser: CurrUserUID,
+                  toUser: toUserUID,
+                  toUserUsername: toUser),
             ),
           );
         },
@@ -156,7 +159,8 @@ class _MessagePanelDisplayState extends State<MessagePanelDisplay> {
                   ),
                 ),
                 TextSpan(
-                  text: "Hi this is your local supermarket calling to let you know e-ciftci is hereeee!",
+                  text:
+                      "Hi this is your local supermarket calling to let you know e-ciftci is hereeee!",
                   style: TextStyle(
                     fontSize: getProportionateScreenWidth(13),
                     fontWeight: FontWeight.w400,
@@ -171,4 +175,3 @@ class _MessagePanelDisplayState extends State<MessagePanelDisplay> {
     );
   }
 }
-
