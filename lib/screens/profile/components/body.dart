@@ -17,7 +17,7 @@ class Body extends StatelessWidget {
           SizedBox(height: 20),
           ProfileMenu(
             text: "Hesabım",
-            icon: "assets/icons/User.dart Icon.svg",
+            icon: "assets/icons/User Icon.svg",
             press: () => {Navigator.pushNamed(context, CompleteProfileScreen.routeName)},
           ),
           ProfileMenu(
