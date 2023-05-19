@@ -1,4 +1,6 @@
-class Profile {
+import 'package:flutter/material.dart';
+
+class Profile extends ChangeNotifier {
   final String uid;
   final String? fName;
   final String? lName;
