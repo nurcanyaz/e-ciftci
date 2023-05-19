@@ -48,7 +48,7 @@ class Body extends StatelessWidget {
               }
               User? user =  FirebaseAuth.instance.currentUser;
               if(user==null){
-                Navigator.pushNamed(context, SignInScreen.routeName);
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignInScreen()));
 
               }
 

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/ChatMessages.dart';
-
+import 'package:rxdart/rxdart.dart';
 class ChatController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -11,17 +11,33 @@ class ChatController {
 
   // Get chat messages between two users
   Stream<List<ChatMessage>> getChatMessages(String userId1, String userId2) {
-    return _firestore
+    Stream<QuerySnapshot> stream1 = _firestore
         .collection('messages')
         .where('senderId', isEqualTo: userId1)
         .where('receiverId', isEqualTo: userId2)
         .orderBy('timestamp', descending: true)
-        .snapshots()
-        .map((querySnapshot) {
-      return querySnapshot.docs.map((doc) {
-        return ChatMessage.fromMap(doc.data());
-      }).toList();
-    });
+        .snapshots();
+
+    Stream<QuerySnapshot> stream2 = _firestore
+        .collection('messages')
+        .where('senderId', isEqualTo: userId2)
+        .where('receiverId', isEqualTo: userId1)
+        .orderBy('timestamp', descending: false)
+        .snapshots();
+
+    return Rx.combineLatest2<QuerySnapshot, QuerySnapshot, List<ChatMessage>>(
+      stream1,
+      stream2,
+          (QuerySnapshot snapshot1, QuerySnapshot snapshot2) {
+        List<ChatMessage> chatMessages = [];
+        chatMessages.addAll(snapshot1.docs.map((doc) => ChatMessage.fromMap(doc.data() as Map<String, dynamic>)).toList());
+        chatMessages.addAll(snapshot2.docs.map((doc) => ChatMessage.fromMap(doc.data() as Map<String, dynamic>)).toList());
+
+        // Sorting the messages by timestamp after merging.
+        chatMessages.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+        return chatMessages;
+      },
+    );
   }
 
 

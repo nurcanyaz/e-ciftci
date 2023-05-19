@@ -14,10 +14,13 @@ import '../../../components/default_button.dart';
 import '../../../constants.dart';
 import '../../../models/Profile.dart';
 import '../../../size_config.dart';
+class MessagePanelDisplay extends StatefulWidget {
+  @override
+  _MessagePanelDisplayState createState() => _MessagePanelDisplayState();
 
-class MessagePanelDisplay extends StatelessWidget {
-  MessagePanelDisplay({Key? key}) : super(key: key);
 
+}
+class _MessagePanelDisplayState extends State<MessagePanelDisplay> {
   final UserController userController = UserController();
   final UserProfileController profileController = UserProfileController();
 
@@ -65,7 +68,7 @@ class MessagePanelDisplay extends StatelessWidget {
                                   } else {
                                     return buildChatPanel(
                                       fromProfileSnapshot.data!,
-                                      toProfileSnapshot.data! as Map<String, dynamic>,
+                                      toProfileSnapshot.data!,
                                       context,
                                     );
                                   }

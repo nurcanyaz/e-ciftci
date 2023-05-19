@@ -1,22 +1,14 @@
-import 'package:e_ciftcim/components/custom_surfix_icon.dart';
-import 'package:e_ciftcim/components/form_error.dart';
-import 'package:e_ciftcim/helper/keyboard.dart';
-
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:e_ciftcim/models/User.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../../Controllers/ChatController.dart';
 import '../../../Controllers/ProfileController.dart';
 import '../../../Controllers/UserController.dart';
-import '../../../components/default_button.dart';
 import '../../../constants.dart';
 import '../../../models/ChatMessages.dart';
 import '../../../models/Profile.dart';
 import '../../../size_config.dart';
+
 class ChatForm extends StatefulWidget {
   final String frmUser;
   final String toUser;
@@ -40,170 +32,168 @@ class _ChatFormState extends State<ChatForm> {
   final ChatController chatController = ChatController();
   final UserProfileController profileController = UserProfileController();
   final UserController userController = UserController();
+  late Future<String> _currentUserIdFuture;
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<String> CurrentUserId() async {
+    return (await userController.getCurrentUserId());
+  }
+
+  Widget _buildLoadingIndicator() {
+    return CircularProgressIndicator();
+  }
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.toUserUsername),
-      ),
-      body: StreamBuilder<List<Profile>>(
-        stream: profileController.getProfileStream(),
-        builder: (BuildContext context, AsyncSnapshot<List<Profile>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: snapshot.data?.length ?? 0,
-                    itemBuilder: (context, index) {
-                      final toUser = snapshot.data![index];
-                      return FutureBuilder<String?>(
-                        future: userController.getCurrentUserId(),
-                        builder: (context, userSnapshot) {
-                          if (userSnapshot.connectionState == ConnectionState.waiting) {
-                            return CircularProgressIndicator();
-                          } else if (userSnapshot.hasError) {
-                            return Text('Er3ror: ${userSnapshot.error}');
-                          } else {
-                            final fromUser = userSnapshot.data;
-                            if (fromUser != null) {
-                              return StreamBuilder<List<ChatMessage>>(
-                                stream: chatController.getChatMessages(toUser.uid, fromUser),
-                                builder: (context, chatSnapshot) {
-                                  if (chatSnapshot.connectionState == ConnectionState.waiting) {
-                                    return CircularProgressIndicator();
-                                  } else if (chatSnapshot.hasError) {
-                                    return Text('Er7ror: ${chatSnapshot.error}');
-                                  } else {
-                                    List<ChatMessage> messages = chatSnapshot.data ?? [];
-                                    return ListView.builder(
-                                      reverse: true,
-                                      itemCount: messages.length,
-                                      itemBuilder: (context, index) {
-                                        ChatMessage message = messages[index];
-                                        if (message.senderId == toUser.uid) {
-                                          return buildChatBubbleTo(message.message);
-                                        } else {
-                                          return buildChatBubbleCurrentUser(message.message);
-                                        }
-                                      },
-                                    );
-                                  }
-                                },
+    _currentUserIdFuture = CurrentUserId();
+    return WillPopScope(
+      onWillPop: () async {
+        // Perform any necessary cleanup or validation before closing the page
+        return true; // Set to false if you want to prevent the page from closing
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(widget.toUserUsername),
+        ),
+        body: FutureBuilder<String>(
+          future: _currentUserIdFuture,
+          builder: (context, userSnapshot) {
+            if (userSnapshot.connectionState == ConnectionState.waiting) {
+              return _buildLoadingIndicator();
+            } else if (userSnapshot.hasError) {
+              return Text('Error: ${userSnapshot.error}');
+            } else {
+              final fromUser = userSnapshot.data;
+              if (fromUser == null) {
+                return Text('Error: Current user ID is null');
+              }
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  StreamBuilder<List<ChatMessage>>(
+                stream: chatController.getChatMessages(fromUser, widget.toUser), // Function to fetch chat messages
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return _buildLoadingIndicator();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        final chatMessages = snapshot.data ?? [];
+                        List<ChatMessage> reversedChatMessages = List.from(chatMessages.reversed);
+                        return Expanded(
+                          child: ListView.builder(
+
+                            itemCount: 1,
+                            itemBuilder: (context, index) {
+
+                              return ChatMessagesWidget(
+                                widget.toUser,
+                                fromUser!,
+                                buildChatBubbleTo,
+                                buildChatBubbleCurrentUser, reversedChatMessages
                               );
-                            } else {
-                              return Text('Error: Current user ID is null');
-                            }
-                          }
-                        },
-                      );
+                            },
+                          ),
+                        );
+                      }
                     },
                   ),
-                ),
-                buildMessageField(),
-              ],
-            );
-          }
-        },
+                  buildMessageField(),
+                ],
+              );
+            }
+          },
+        ),
+      ),
+    );
+  }
+  Container buildChatBubbleTo(String msg, DateTime date) {
+    return Container(
+      alignment: Alignment.centerLeft,
+      margin: EdgeInsets.fromLTRB(20, 5, 5, 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextButton(
+            style: TextButton.styleFrom(
+              primary: kPrimaryColor,
+              padding: EdgeInsets.all(10),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+              backgroundColor: Color(0xFFF5F6F9),
+            ),
+            onPressed: () {},
+            child: Text(
+              msg,
+              style: TextStyle(
+                fontSize: getProportionateScreenWidth(27),
+                fontWeight: FontWeight.w400,
+                color: kTextColor,
+              ),
+            ),
+          ),
+          SizedBox(height: 4),
+          Text(
+            date.toString(),
+            style: TextStyle(
+              fontSize: getProportionateScreenWidth(12),
+              fontWeight: FontWeight.w400,
+              color: Colors.grey,
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Padding buildChatBubbleTo(String msg) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 22, vertical: 0),
-      child: TextButton(
-        style: TextButton.styleFrom(
-          primary: kPrimaryColor,
-          padding: EdgeInsets.all(10),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-          backgroundColor: Color(0xFFF5F6F9),
-        ),
-        onPressed: () {},
-        child: Row(
-          children: [
-            Expanded(
-              child: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "${widget.toUser}\n",
-                      style: TextStyle(
-                        fontSize: getProportionateScreenWidth(20),
-                        fontWeight: FontWeight.w500,
-                        color: kTextColor,
-                      ),
-                    ),
-                    TextSpan(
-                      text: msg,
-                      style: TextStyle(
-                        fontSize: getProportionateScreenWidth(13),
-                        fontWeight: FontWeight.w400,
-                        color: kTextColor,
-                      ),
-                    ),
-                  ],
-                ),
+  Container buildChatBubbleCurrentUser(String msg, DateTime date) {
+    return Container(
+      alignment: Alignment.centerRight,
+      margin: EdgeInsets.fromLTRB(20, 5, 20, 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          TextButton(
+            style: TextButton.styleFrom(
+              primary: kPrimaryColor,
+              padding: EdgeInsets.all(15),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+              backgroundColor: kPrimaryColor,
+            ),
+            onPressed: () {},
+            child: Text(
+              msg,
+              style: TextStyle(
+                fontSize: getProportionateScreenWidth(25),
+                fontWeight: FontWeight.w400,
+                color: Colors.white,
               ),
             ),
-          ],
-        ),
+          ),
+          SizedBox(height: 4),
+          Text(
+            date.toString(),
+            style: TextStyle(
+              fontSize: getProportionateScreenWidth(10),
+              fontWeight: FontWeight.w400,
+              color: Colors.grey,
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Padding buildChatBubbleCurrentUser(String msg) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 22, vertical: 0),
-      child: TextButton(
-        style: TextButton.styleFrom(
-          primary: kPrimaryColor,
-          padding: EdgeInsets.all(10),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-          backgroundColor: Color(0xFFF5F6F9),
-        ),
-        onPressed: () {},
-        child: Row(
-          children: [
-            Expanded(
-              child: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "${widget.toUser}\n",
-                      style: TextStyle(
-                        fontSize: getProportionateScreenWidth(20),
-                        fontWeight: FontWeight.w500,
-                        color: kTextColor,
-                      ),
-                    ),
-                    TextSpan(
-                      text: msg,
-                      style: TextStyle(
-                        fontSize: getProportionateScreenWidth(13),
-                        fontWeight: FontWeight.w400,
-                        color: kTextColor,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+
+
 
   Widget buildMessageField() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(10), vertical: getProportionateScreenHeight(10)),
+      padding: EdgeInsets.symmetric(
+          horizontal: getProportionateScreenWidth(10),
+          vertical: getProportionateScreenHeight(10)),
       child: Row(
         children: [
           Expanded(
@@ -231,8 +221,10 @@ class _ChatFormState extends State<ChatForm> {
                     focusedBorder: InputBorder.none,
                     enabledBorder: InputBorder.none,
                     hintText: "Mesaj",
-                    prefixIcon: Icon(Icons.chat_bubble_outline,
-                      color: kPrimaryColor,),
+                    prefixIcon: Icon(
+                      Icons.chat_bubble_outline,
+                      color: kPrimaryColor,
+                    ),
                   ),
                 ),
               ),
@@ -254,7 +246,8 @@ class _ChatFormState extends State<ChatForm> {
                   // Generate a random ID
                   String messageId = uuid.v4();
                   ChatMessage chatMessage = ChatMessage(
-                    id: messageId, // Assign a unique ID to the message
+                    id: messageId,
+                    // Assign a unique ID to the message
                     senderId: widget.frmUser,
                     receiverId: receiver,
                     message: msgSend,
@@ -270,6 +263,34 @@ class _ChatFormState extends State<ChatForm> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class ChatMessagesWidget extends StatelessWidget {
+  final String toUser;
+  final String fromUser;
+  final List<ChatMessage> messages;
+  final Container Function(String,DateTime) buildChatBubbleCurrentUser;
+  final Container Function(String,DateTime) buildChatBubbleTo;
+  final ChatController chatController = ChatController();
+
+  ChatMessagesWidget(this.toUser, this.fromUser,
+      this.buildChatBubbleTo, this.buildChatBubbleCurrentUser, this.messages);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: messages.map((message) {
+        if (message.senderId == toUser) {
+          return buildChatBubbleTo(message.message,message.timestamp);
+        } else if (message.senderId == fromUser) {
+          return buildChatBubbleCurrentUser(message.message,message.timestamp);
+        }
+        else {
+          return SizedBox.shrink();
+        }
+      }).toList(),
     );
   }
 }

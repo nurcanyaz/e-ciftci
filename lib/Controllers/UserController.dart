@@ -5,12 +5,12 @@ import 'package:e_ciftcim/models/User.dart' as prefix;
 class UserController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<String?> getCurrentUserId() async {
+  Future<String> getCurrentUserId() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       return user.uid;
     } else {
-      return null;
+      return 'no user id';
     }
   }
 

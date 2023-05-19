@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 
 import '../../complete_profile/complete_profile_screen.dart';
 import 'chat_form.dart';
-import 'message_display.dart';
+import 'contact_display.dart';
 
 class Body extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -15,16 +16,12 @@ class Body extends StatelessWidget {
         width: double.infinity,
         child: Padding(
           padding:
-              EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                MessagePanelDisplay(
-                ),
-                SizedBox(height: SizeConfig.screenHeight * 0.5),
-                 ],
+          EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
+            child: SingleChildScrollView(
+              child:
+                MessagePanelDisplay(),
+
             ),
-          ),
         ),
       ),
     );

@@ -28,7 +28,7 @@ class Body extends StatelessWidget {
           child: DefaultButton(
             text: "Anasayfaya Dön",
             press: () {
-              Navigator.pushNamed(context, HomeScreen.routeName);
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
             },
           ),
         ),
