@@ -41,22 +41,48 @@ class ChatController {
   }
 
 
-  //get Last message between users
   Future<ChatMessage?> getLastChatMessage(String userId1, String userId2) async {
-    QuerySnapshot querySnapshot = await _firestore
+    QuerySnapshot querySnapshot1 = await _firestore
         .collection('messages')
-        .where('senderId', whereIn: [userId1, userId2])
-        .where('receiverId', whereIn: [userId1, userId2])
+        .where('receiverId', isEqualTo: userId1)
+        .where('senderId', isEqualTo: userId2)
         .orderBy('timestamp', descending: true)
         .limit(1)
         .get();
 
-    if (querySnapshot.docs.isNotEmpty) {
-      return ChatMessage.fromMap(querySnapshot.docs.first.data as Map<String, dynamic>);
+    QuerySnapshot querySnapshot2 = await _firestore
+        .collection('messages')
+        .where('receiverId', isEqualTo: userId2)
+        .where('senderId', isEqualTo: userId1)
+        .orderBy('timestamp', descending: true)
+        .limit(1)
+        .get();
+
+    ChatMessage? chatMessage1;
+    ChatMessage? chatMessage2;
+
+    if (querySnapshot1.docs.isNotEmpty) {
+      chatMessage1 = ChatMessage.fromMap(querySnapshot1.docs.first.data() as Map<String, dynamic>);
+    }
+    if (querySnapshot2.docs.isNotEmpty) {
+      chatMessage2 = ChatMessage.fromMap(querySnapshot2.docs.first.data() as Map<String, dynamic>);
+    }
+
+    if (chatMessage1 != null && chatMessage2 != null) {
+      if (chatMessage1.timestamp.isAfter(chatMessage2.timestamp)) {
+        return chatMessage1;
+      } else {
+        return chatMessage2;
+      }
+    } else if (chatMessage1 != null) {
+      return chatMessage1;
+    } else if (chatMessage2 != null) {
+      return chatMessage2;
     } else {
       return null;
     }
   }
+
 
 
 

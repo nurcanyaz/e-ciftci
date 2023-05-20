@@ -1,4 +1,8 @@
+
+
+import 'package:e_ciftcim/Controllers/ChatController.dart';
 import 'package:e_ciftcim/Controllers/ProfileController.dart';
+import 'package:e_ciftcim/models/ChatMessages.dart';
 import 'package:e_ciftcim/screens/chat/components/chat_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -16,6 +20,7 @@ class MessagePanelDisplay extends StatefulWidget {
 class _MessagePanelDisplayState extends State<MessagePanelDisplay> {
   final UserController userController = UserController();
   final UserProfileController profileController = UserProfileController();
+  final ChatController chatController= ChatController();
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +54,7 @@ class _MessagePanelDisplayState extends State<MessagePanelDisplay> {
                           builder: (context, toProfileSnapshot) {
                             if (toProfileSnapshot.connectionState ==
                                 ConnectionState.waiting) {
+
                               return CircularProgressIndicator();
                             } else if (toProfileSnapshot.hasError) {
                               return Text('Error: ${toProfileSnapshot.error}');
@@ -89,6 +95,7 @@ class _MessagePanelDisplayState extends State<MessagePanelDisplay> {
     );
   }
 
+
   Padding buildChatPanel(Map<String, dynamic> profileFrom,
       Map<String, dynamic> profileTo, context) {
     String toUser = profileTo['username'];
@@ -120,7 +127,21 @@ class _MessagePanelDisplayState extends State<MessagePanelDisplay> {
           children: [
             buildIcon(toUserIcon),
             SizedBox(width: 10),
-            buildText(toUser),
+            FutureBuilder<ChatMessage?>(
+              future: chatController.getLastChatMessage(CurrUserUID, toUserUID),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator(); // or any other loading indicator
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  final lastMsg = snapshot.data;
+                  return    buildText(toUser, lastMsg);
+                }
+              },
+            ),
+
+
             Icon(Icons.arrow_forward_ios),
           ],
         ),
@@ -140,38 +161,50 @@ class _MessagePanelDisplayState extends State<MessagePanelDisplay> {
       ],
     );
   }
-
-  Expanded buildText(String UID) {
+  Expanded buildText(String UID, msg) {
     return Expanded(
-      child: Column(
-        children: [
-          RichText(
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: "$UID \n",
-                  style: TextStyle(
-                    fontSize: getProportionateScreenWidth(20),
-                    fontWeight: FontWeight.w500,
-                    color: kTextColor,
+      child: Container(
+        alignment: Alignment.topLeft,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            RichText(
+              overflow: TextOverflow.ellipsis,
+              maxLines: 3,
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: "$UID \n",
+                    style: TextStyle(
+                      fontSize: getProportionateScreenWidth(20),
+                      fontWeight: FontWeight.w500,
+                      color: kTextColor,
+                    ),
                   ),
-                ),
-                TextSpan(
-                  text:
-                      "Hi this is your local supermarket calling to let you know e-ciftci is hereeee!",
-                  style: TextStyle(
-                    fontSize: getProportionateScreenWidth(13),
-                    fontWeight: FontWeight.w400,
-                    color: kTextColor,
+                  TextSpan(
+                    text: "\n",
+                      style: TextStyle(
+                        fontSize: getProportionateScreenWidth(5),
+                        fontWeight: FontWeight.w400,
+                        color: kTextColor,
+                      )
                   ),
-                ),
-              ],
-            ),
-          )
-        ],
+                  TextSpan(
+                    text: msg.message == null ? "Mesaj yok." : "${msg.message} ",
+                    style: TextStyle(
+                      fontSize: getProportionateScreenWidth(13),
+                      fontWeight: FontWeight.w400,
+                      color: kTextColor,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
+
+
 }

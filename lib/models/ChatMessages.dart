@@ -24,14 +24,14 @@ class ChatMessage {
     };
   }
 
-  // Create model from Firestore document
-  factory ChatMessage.fromMap(Map<String, dynamic> map) {
-    return ChatMessage(
-      id: map['id'],
-      senderId: map['senderId'],
-      receiverId: map['receiverId'],
-      message: map['message'],
-      timestamp: map['timestamp'].toDate(),
-    );
-  }
+    // Create model from Firestore document
+    factory ChatMessage.fromMap(Map<String, dynamic> map) {
+      return ChatMessage(
+        id: map['id'],
+        senderId: map['senderId'],
+        receiverId: map['receiverId'],
+        message: map['message'],
+        timestamp: map['timestamp'].toDate(),
+      );
+    }
 }
