@@ -60,24 +60,39 @@ class _MessagePanelDisplayState extends State<MessagePanelDisplay> {
                               return Text('Error: ${toProfileSnapshot.error}');
                             } else {
                               return FutureBuilder<Map<String, dynamic>>(
-                                future:
-                                    profileController.getUserProfile(fromUser),
-                                builder: (context, fromProfileSnapshot) {
-                                  if (fromProfileSnapshot.connectionState ==
-                                      ConnectionState.waiting) {
+                                future: profileController.getUserProfile(toUser.uid),
+                                builder: (context, toProfileSnapshot) {
+                                  if (toProfileSnapshot.connectionState == ConnectionState.waiting) {
                                     return CircularProgressIndicator();
-                                  } else if (fromProfileSnapshot.hasError) {
-                                    return Text(
-                                        'Error: ${fromProfileSnapshot.error}');
+                                  } else if (toProfileSnapshot.hasError) {
+                                    return Text('Error: ${toProfileSnapshot.error}');
                                   } else {
-                                    return buildChatPanel(
-                                      fromProfileSnapshot.data!,
-                                      toProfileSnapshot.data!,
-                                      context,
+                                    return FutureBuilder<Map<String, dynamic>>(
+                                      future: profileController.getUserProfile(fromUser),
+                                      builder: (context, fromProfileSnapshot) {
+                                        if (fromProfileSnapshot.connectionState == ConnectionState.waiting) {
+                                          return CircularProgressIndicator();
+                                        } else if (fromProfileSnapshot.hasError) {
+                                          return Text('Error: ${fromProfileSnapshot.error}');
+                                        } else {
+                                          if (fromProfileSnapshot.hasData && toProfileSnapshot.hasData) {
+                                            final fromProfileData = fromProfileSnapshot.data!;
+                                            final toProfileData = toProfileSnapshot.data!;
+                                            return buildChatPanel(
+                                              fromProfileData,
+                                              toProfileData,
+                                              context,
+                                            );
+                                          } else {
+                                            return SizedBox(); // Return an empty container or any appropriate widget when there is no data
+                                          }
+                                        }
+                                      },
                                     );
                                   }
                                 },
                               );
+
                             }
                           },
                         );
@@ -102,6 +117,7 @@ class _MessagePanelDisplayState extends State<MessagePanelDisplay> {
     String CurrUserUID = profileFrom['UID'];
     String toUserUID = profileTo['UID'];
     String toUserIcon = profileTo['icon'];
+    print(toUser);
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 1, vertical: 2),
       child: TextButton(
@@ -129,17 +145,22 @@ class _MessagePanelDisplayState extends State<MessagePanelDisplay> {
             SizedBox(width: 10),
             FutureBuilder<ChatMessage?>(
               future: chatController.getLastChatMessage(CurrUserUID, toUserUID),
-              builder: (context, snapshot) {
+              builder: (context, AsyncSnapshot<ChatMessage?> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return CircularProgressIndicator(); // or any other loading indicator
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
-                } else {
-                  final lastMsg = snapshot.data;
-                  return    buildText(toUser, lastMsg);
+                } else if (snapshot.hasData) {
+                  final lastMsg = snapshot.data != null ? snapshot.data?.message! : 'Mesaj Yok';
+                  return buildText(toUser, lastMsg);
                 }
+               else{
+                  final lastMsg = 'Mesaj Yok';
+                  return buildText(toUser, lastMsg);}
               },
             ),
+
+
 
 
             Icon(Icons.arrow_forward_ios),
@@ -174,7 +195,7 @@ class _MessagePanelDisplayState extends State<MessagePanelDisplay> {
               text: TextSpan(
                 children: [
                   TextSpan(
-                    text: "$UID \n",
+                    text: "${UID} \n",
                     style: TextStyle(
                       fontSize: getProportionateScreenWidth(20),
                       fontWeight: FontWeight.w500,
@@ -190,7 +211,7 @@ class _MessagePanelDisplayState extends State<MessagePanelDisplay> {
                       )
                   ),
                   TextSpan(
-                    text: msg.message == null ? "Mesaj yok." : "${msg.message} ",
+                    text: "${msg} ",
                     style: TextStyle(
                       fontSize: getProportionateScreenWidth(13),
                       fontWeight: FontWeight.w400,
